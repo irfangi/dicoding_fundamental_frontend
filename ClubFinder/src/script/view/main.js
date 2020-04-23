@@ -1,12 +1,28 @@
+import DataSource from '../data/data-source.js'
+
 const main = () =>{
     const searchElement = document.querySelector("#searchElement");
     const buttonSearchElement = document.querySelector("#searchButtonElement");
     const clubListElement = document.querySelector("#clubList");
 
-    const onButtonSearchClicked = () => {
-        const dataSource = new DataSource(renderResult, fallbackResult);
-        dataSource.searchClub(searchElement.value);
-    };
+    // menggunakan then atau call back
+    // const onButtonSearchClicked = () => {
+        // const dataSource = new DataSource(renderResult, fallbackResult);
+        // dataSource.searchClub(searchElement.value);
+
+        // const dataSource = new DataSource();
+    //     DataSource.searchClub(searchElement.value).then(renderResult).catch(fallbackResult);
+    // };
+
+    // menggunakan async
+    const onButtonSearchClicked = async () =>{
+        try {
+            const result = await DataSource.searchClub(searchElement.value);
+            renderResult(result);
+        } catch (error) {
+            fallbackResult(error);
+        }
+    }
 
     const renderResult = (results) => {
         clubListElement.innerHTML = "";
@@ -41,3 +57,5 @@ const main = () =>{
 
     buttonSearchElement.addEventListener("click", onButtonSearchClicked);
 };
+
+export default main;

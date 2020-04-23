@@ -17,3 +17,131 @@ Membuat espresso tentu akan membutuhkan waktu lebih lama dibandingkan dengan men
 
 Dalam program yang dijalankan secara asynchronous pun demikian. 
 Task yang kecil akan lebih dahulu selesai dibandingkan dengan task yang besar, meskipun task yang besar lebih dahulu dijalankan.
+
+What is Promise?
+Promise merupakan salah satu fitur penting dari ES6. Promise ini dapat menggantikan peran callback dengan menggunakan ciri khas fungsi .then-nya itu. Tapi mengapa fitur ini dinamakan dengan “Promise” alias “Janji”?
+
+Fitur ini berfungsi seperti namanya, yaitu untuk membuat janji. Mari kita analogikan kembali dalam dunia nyata. Ketika kita memesan kopi kepada pelayan, maka secara tidak langsung pelayan tersebut berjanji kepada kita untuk membuatkan kopi kemudian menghidangkannya pada kita. Namun janji bisa hanya tinggal janji. Dalam dunia nyata pun, janji bisa juga tidak terpenuhi, entah itu karena kopi pesanan kita sedang kosong, atau mesin pembuat kopi itu sedang rusak.
+
+Nah, Promise memiliki perilaku yang sama dengan analogi yang digambarkan tadi. Dalam promise terdapat 3 (tiga) kondisi, yakni:
+
+Pending (Janji sedang dalam proses)
+Fulfilled (Janji terpenuhi)
+Rejected (Janji gagal terpenuhi)
+
+Lantas bagaimana cara membuat janji (Promise) di JavaScript? 
+
+<script src="">
+    const executorFunction = (resolve, reject) => {
+    const isCoffeeMakerReady = true;
+    if(isCoffeeMakerReady) {
+        resolve("Kopi berhasil dibuat");
+    } else {
+        reject("Mesin Kopi tidak bisa digunakan!")
+    }
+    }
+    
+    const makeCoffee = new Promise(executorFunction);
+    console.log(makeCoffee);
+    
+    /* output:
+    Promise { 'Kopi berhasil dibuat' }
+    */
+
+</script>
+
+<!-- chaining promise -->
+<script>
+    const state = {
+ isCoffeeMakerReady: true,
+ seedStocks: {
+   arabica: 250,
+   robusta: 60,
+   liberica: 80
+ }
+}
+ 
+const getSeeds = (type, miligrams) => {
+ return new Promise((resolve, reject) => {
+   if(state.seedStocks[type] >= miligrams) {
+     state.seedStocks[type] -= miligrams;
+     resolve("Biji kopi didapatkan!")
+   } else {
+     reject("Maaf stock kopi habis!")
+   }
+ });
+}
+ 
+const makeCoffee = seeds => {
+ return new Promise((resolve, reject) => {
+   if(state.isCoffeeMakerReady) {
+     resolve("Kopi berhasil dibuat!")
+   } else {
+     reject("Maaf mesin tidak dapat digunakan!");
+   }
+ })
+}
+ 
+const servingToTable = coffee => {
+ return new Promise(resolve => {
+   resolve("Pesanan kopi sudah selesai!")
+ })
+}
+ 
+function reserveACoffee(type, miligrams) {
+ getSeeds(type, miligrams)
+ .then(makeCoffee)
+ .then(servingToTable)
+ .then(resolvedValue => {
+   console.log(resolvedValue);
+ })
+ .catch(rejectedReason => {
+   console.log(rejectedReason);
+ })
+}
+ 
+/* Silakan ubah tipe kopi dan kuantitasnya, untuk mendapatkan promise rejection*/
+reserveACoffee("liberica", 80);
+</script>
+
+
+<!-- primise all -->
+
+<script src="">
+    const arabicaOrder = () => {
+ return new Promise(resolve => {
+   setTimeout(() => {
+     resolve("Kopi arabika selesai!")
+   }, 4000)
+ })
+}
+ 
+const robustaOrder = () => {
+ return new Promise(resolve => {
+   setTimeout(() => {
+     resolve("Kopi robusta selesai!")
+   }, 2000)
+ })
+}
+ 
+const libericaOrder = () => {
+ return new Promise(resolve => {
+   setTimeout(() => {
+     resolve("Kopi liberica selesai!")
+   }, 3000)
+ })
+}
+ 
+const promises = [arabicaOrder(), robustaOrder(), libericaOrder()];
+ 
+Promise.all(promises)
+.then(resolvedValue => {
+ console.log(resolvedValue);
+})
+ 
+/* output:
+[ 'Kopi arabika selesai!',
+ 'Kopi robusta selesai!',
+ 'Kopi liberica selesai!' ]
+ */
+</script>
